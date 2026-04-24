@@ -335,7 +335,7 @@ public class registro_inventario extends JFrame implements ActionListener {
 
 				    framePrincipal.setVisible(true);
 				    this.dispose();
-				}
+					}
 				}
 			}
 

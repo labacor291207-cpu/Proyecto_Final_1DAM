@@ -118,6 +118,6 @@ public class gerente extends JPanel implements ActionListener{
 			    frame.setContentPane(new solicitudes_compra(modelo));
 			    frame.revalidate();
 			    frame.repaint();
-						}
+					}
 			}
 }

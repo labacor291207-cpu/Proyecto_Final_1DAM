@@ -154,10 +154,6 @@ public class usuario extends JPanel implements ActionListener{
 			    
 			    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
 			    frame.dispose();
-					}
-
-		 
-		 
-		 
+		 }
 	}
 }

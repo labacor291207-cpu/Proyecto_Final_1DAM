@@ -254,12 +254,8 @@ public class solicitud_compra extends JPanel implements ActionListener{
 		    } catch (Exception ex) {
 		        ex.printStackTrace();
 		        JOptionPane.showMessageDialog(null, "Error al guardar: " + ex.getMessage());
-		    }
-		}
-		
-		
-		
-		
+		    	}
+			}
 		}
 	}
 

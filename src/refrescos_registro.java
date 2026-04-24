@@ -137,7 +137,7 @@ public class refrescos_registro extends JPanel implements ActionListener{
 		    frame.repaint();
 				}	
 			}
-}
+		}
 		
 	
 	

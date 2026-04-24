@@ -163,7 +163,7 @@ public class Logeo extends JFrame implements ActionListener{
 
 		    framePrincipal.setVisible(true);
 		    this.dispose();
-		}
+			}
 		}
 	}
 

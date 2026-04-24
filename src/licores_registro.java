@@ -141,7 +141,7 @@ public class licores_registro extends JPanel implements ActionListener{
 		    frame.setContentPane(new usuario("cargo"));
 		    frame.revalidate();
 		    frame.repaint();
-					}			
+					 }			
 			 }
 	}
 	

@@ -114,13 +114,6 @@ public class solicitudes_compra extends JPanel implements ActionListener {
 			    frame.setContentPane(new gerente("cargo"));
 			    frame.revalidate();
 			    frame.repaint();
-						}
-		 
-		 
-	}
-	
-	
-	
-	
-	
+						}	 
+			}
 }
