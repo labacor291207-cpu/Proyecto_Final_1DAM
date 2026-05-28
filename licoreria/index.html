@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title>Licoreria CSA - Registro</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body {
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-wrap {
+            background: rgba(0, 0, 0, 0.7) !important;
+            border-radius: 15px;
+            padding: 2rem !important;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            backdrop-filter: blur(5px);
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+        #mensaje {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .exito { color: #4cff72; }
+        .error  { color: #ff5c5c; }
+    </style>
+</head>
+<body class="img" style="background-image: url(images/fondo.jpg);">
+    <section class="ftco-section" style="width: 100%;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="login-wrap p-0">
+                        <h3 class="mb-4 text-center" style="color: #fff; font-weight: 700; letter-spacing: 2px;">Licorería CSA</h3>
+
+                        <form id="formRegistro" action="registro.php" method="POST" class="signin-form">
+
+                            <div class="form-group mb-3">
+                                <label class="label" style="color: #fff;">Nombre Completo</label>
+                                <input type="text" name="NombreCompleto" class="form-control"
+                                       placeholder="Escribe tu nombre" required>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="label" style="color: #fff;">Contraseña</label>
+                                <!-- name="clave" coincide con $_POST['clave'] en registro.php -->
+                                <input id="password-field" type="password" name="clave"
+                                       class="form-control" placeholder="Mínimo 8 caracteres"
+                                       minlength="8" required>
+                                <span toggle="#password-field"
+                                      class="fa fa-fw fa-eye field-icon toggle-password"
+                                      style="color: rgba(255,255,255,0.6);"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="label" style="color: #fff;">Cargo en la empresa</label>
+                                <select name="cargo" class="form-control"
+                                        style="color: #fff; background: #222;" required>
+                                    <option value="" disabled selected>Selecciona un cargo</option>
+                                    <option value="Empleado">Empleado</option>
+                                    <option value="Gerente">Gerente</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary submit px-3"
+                                        style="background: #fbceb1 !important; border: none !important;
+                                               color: #000 !important; font-weight: 700; margin-top: 10px;">
+                                    REGISTRAR USUARIO
+                                </button>
+                            </div>
+
+                            <div id="mensaje"></div>
+
+                            <div class="form-group d-md-flex mt-3">
+                                <div class="w-50 text-left">
+                                    <label class="checkbox-wrap checkbox-primary mb-0" style="color: #fff;">Recordar
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        document.getElementById('formRegistro').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form       = e.target;
+            const formData   = new FormData(form);
+            const mensajeDiv = document.getElementById('mensaje');
+
+            fetch(form.action, { method: 'POST', body: formData })
+            .then(response => response.text())
+            .then(data => {
+                const cleanData = data.trim();
+                if (cleanData === "Registro exitoso") {
+                    mensajeDiv.innerHTML = "✅ Registro completado con éxito";
+                    mensajeDiv.className = "exito";
+                    form.reset();
+                } else {
+                    mensajeDiv.innerHTML = "❌ Error: " + cleanData;
+                    mensajeDiv.className = "error";
+                }
+            })
+            .catch(() => {
+                mensajeDiv.innerHTML = "❌ Error de conexión con el servidor";
+                mensajeDiv.className = "error";
+            });
+        });
+    </script>
+</body>
+</html>
