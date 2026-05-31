@@ -1,261 +1,641 @@
 import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.JTableHeader;
 import com.toedter.calendar.JDateChooser;
-
-import BaseDatos.Conexion;
-
+import BaseDatos.GestionBaseDatos;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JTable;
-import java.awt.Color;
-import javax.swing.JSeparator;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class solicitud_compra extends JPanel implements ActionListener{
+public class solicitud_compra extends JPanel implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTable table;
-	private JTable table_1;
-	private JLabel lblSolicitud;
-	private JLabel lblNumero;
-	private JLabel lblFecha;
-	private JLabel lblProducto;
-	private JLabel lblCantidad;
-	private JLabel lblTipo;
-	private JLabel lblProveedor;
-	private JLabel lblEstado;
-	private JLabel lblMonto;
-	private JComboBox cbTIPO;
-	private JComboBox cbESTADO;
-	private JButton btnVolver;
-	private JButton btnGuardar;
-	private JButton btnLimpiar;
-	private JDateChooser dateChooser;
-	private DefaultTableModel modelo;
-	
+    private static final long serialVersionUID = 1L;
+    private JTextField textField_2;
+    private JTextField textField_3;
+    private JTextField textField_4;
+    private JLabel lblSolicitud;
+    private JLabel lblFecha;
+    private JLabel lblProducto;
+    private JLabel lblCantidad;
+    private JLabel lblTipo;
+    private JLabel lblNombreG;
+    private JLabel lblEstado;
+    private JComboBox<String> cbTIPO;
+    private JComboBox<String> cbESTADO;
+    private JButton btnVolver;
+    private JButton btnGuardar;
+    private JButton btnLimpiar;
+    private JButton btnAgregar;
+    private JDateChooser dateChooser;
+    private JTable table;
+    private DefaultTableModel modeloCompra;
+    private JScrollPane scrollPane;
+    private JButton btnVerTodo;
+    private DefaultTableModel modeloSolicitud;
 
-	/**
-	 * Create the panel.
-	 */
-	public solicitud_compra() {
-		setLayout(null);
-		
-		lblSolicitud = new JLabel("SOLICITUD DE COMPRA");
-		lblSolicitud.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 23));
-		lblSolicitud.setBounds(140, 35, 237, 36);
-		add(lblSolicitud);
-		
-		lblNumero = new JLabel("N°SOLICITUD:");
-		lblNumero.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblNumero.setBounds(26, 86, 92, 27);
-		add(lblNumero);
-		
-		textField = new JTextField();
-		textField.setBounds(121, 81, 101, 23);
-		add(textField);
-		textField.setColumns(10);
-		
-		lblFecha = new JLabel("FECHA:");
-		lblFecha.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblFecha.setBounds(269, 90, 71, 19);
-		add(lblFecha);
-		
-		dateChooser = new JDateChooser();
-		dateChooser.setBounds(332, 82, 160, 28);
-		dateChooser.setDateFormatString("yyyy-MM-dd");
+    public solicitud_compra(DefaultTableModel modeloCompra) {
+        setOpaque(false);
 
-		add(dateChooser);
-		
-		lblProducto = new JLabel("PRODUCTO:");
-		lblProducto.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblProducto.setBounds(64, 144, 70, 18);
-		add(lblProducto);
-		
-		lblCantidad = new JLabel("CANTIDAD:");
-		lblCantidad.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblCantidad.setBounds(64, 177, 83, 18);
-		add(lblCantidad);
-		
-		lblTipo = new JLabel("TIPO:");
-		lblTipo.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblTipo.setBounds(64, 211, 71, 19);
-		add(lblTipo);
-		
-		lblProveedor = new JLabel("PROVEEDOR:");
-		lblProveedor.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblProveedor.setBounds(64, 240, 84, 19);
-		add(lblProveedor);
-		
-		lblEstado = new JLabel("ESTADO:");
-		lblEstado.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblEstado.setBounds(64, 269, 71, 19);
-		add(lblEstado);
-		
-		lblMonto = new JLabel("MONTO TOTAL:");
-		lblMonto.setFont(new Font("Rockwell Nova Cond", Font.BOLD, 14));
-		lblMonto.setBounds(64, 298, 101, 19);
-		add(lblMonto);
-		
-		textField_2 = new JTextField();
-		textField_2.setBounds(221, 141, 119, 18);
-		add(textField_2);
-		textField_2.setColumns(10);
-		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(221, 169, 119, 18);
-		add(textField_3);
-		
-		cbTIPO = new JComboBox();
-		cbTIPO.setModel(new DefaultComboBoxModel(new String[] {"Selecciona el tipo", "REFRESCO", "LICOR"}));
-		cbTIPO.setBounds(221, 197, 119, 27);
-		add(cbTIPO);
-		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(221, 240, 119, 18);
-		add(textField_4);
-		
-		cbESTADO = new JComboBox();
-		cbESTADO.setModel(new DefaultComboBoxModel(new String[] {"Selecciona estado", "PENDIENTE", "APROBADO", "RECIBIDO"}));
-		cbESTADO.setBounds(221, 269, 119, 20);
-		add(cbESTADO);
-		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(221, 299, 119, 18);
-		add(textField_5);
-		
-		table = new JTable();
-		table.setBackground(new Color(245, 214, 154));
-		table.setBounds(36, 123, 151, 212);
-		add(table);
-		
-		table_1 = new JTable();
-		table_1.setBackground(new Color(163, 189, 237));
-		table_1.setBounds(184, 123, 203, 212);
-		add(table_1);
-		
-		JSeparator separator = new JSeparator();
-		separator.setBounds(10, 357, 482, 19);
-		add(separator);
-		
-		btnVolver = new JButton("");
-		btnVolver.addActionListener(this);
-		btnVolver.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/19-add-cat_icon-icons.com_76695.png")));
-		btnVolver.setBounds(36, 386, 71, 36);
-		add(btnVolver);
-		
-		btnGuardar = new JButton("");
-		btnGuardar.addActionListener(this);
-		btnGuardar.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/1485477072-check_78599.png")));
-		btnGuardar.setBounds(214, 386, 71, 36);
-		add(btnGuardar);
-		
-		btnLimpiar = new JButton("");
-		btnLimpiar.addActionListener(this);
-		btnLimpiar.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/1-trash-cat_icon-icons.com_76677.png")));
-		btnLimpiar.setBounds(366, 386, 71, 36);
-		add(btnLimpiar);
-		
-		modelo = new DefaultTableModel();
-		modelo.addColumn("ID");
-		modelo.addColumn("PRODUCTO");
-		modelo.addColumn("CANTIDAD");
-		modelo.addColumn("TIPO");
-		modelo.addColumn("FECHA");
-		modelo.addColumn("PROVEEDOR");
-		modelo.addColumn("ESTADO");
-		modelo.addColumn("MONTO T.");
+        this.modeloCompra = new DefaultTableModel(
+                new String[]{"Nombre", "Cantidad", "Tipo"}, 0
+        );
+        
+        this.modeloSolicitud = new DefaultTableModel(
+                new String[]{"ID Solicitud", "Fecha", "Estado"}, 0
+        );
 
-	}
-	public void actionPerformed(ActionEvent e) {
-		Object ob = e.getSource();
+        setLayout(null);
+        setSize(560, 720);
 
-		if (ob.equals(btnVolver)) {
-		    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-		    frame.setContentPane(new gerente("cargo"));
-		    frame.revalidate();
-		    frame.repaint();
-					}
-		if (ob.equals(btnGuardar)) {
+        Color translucidoBase  = new Color(255, 255, 255, 35);
+        Color translucidoHover = new Color(255, 255, 255, 55);
 
-		    String producto = textField_2.getText();
-		    String cantidad = textField_3.getText();
-		    String tipo = cbTIPO.getSelectedItem().toString();
-		    Date fecha = dateChooser.getDate();
-		    String proveedor = textField_4.getText();
-		    String estado = cbESTADO.getSelectedItem().toString();
-		    String monto = textField_5.getText();
+        JPanel panelContenedor = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
+                g2.setColor(new Color(255, 255, 255, 38));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 15, 15);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        panelContenedor.setLayout(null);
+        panelContenedor.setBackground(new Color(0, 0, 0, 180));
+        panelContenedor.setOpaque(false);
+        panelContenedor.setBounds(30, 30, 500, 620);
+        add(panelContenedor);
 
-		    
-		    if (producto.isEmpty() || cantidad.isEmpty()
-		            || tipo.equals("Selecciona el tipo")
-		            || fecha == null
-		            || proveedor.isEmpty()
-		            || estado.equals("Selecciona estado")
-		            || monto.isEmpty()) {
-		        JOptionPane.showMessageDialog(null, "Completa todos los campos");
-		        return;
-		    }
+        lblSolicitud = new JLabel("SOLICITUD DE COMPRA");
+        lblSolicitud.setForeground(Color.WHITE);
+        lblSolicitud.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblSolicitud.setBounds(130, 15, 260, 36);
+        panelContenedor.add(lblSolicitud);
 
-		    try {
-		        Connection con = Conexion.getConexion();
+        lblFecha = new JLabel("FECHA:");
+        lblFecha.setForeground(Color.WHITE);
+        lblFecha.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblFecha.setBounds(36, 75, 71, 19);
+        panelContenedor.add(lblFecha);
 
-		        
-		        String sql = "INSERT INTO solicitudes_compra "
-		                   + "(producto, cantidad, tipo, fecha_solicitud, proveedor, estado, monto_total) "
-		                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        JPanel pildoraFecha = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(255, 255, 255, 20));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
+                g2.setColor(new Color(255, 255, 255, 40));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
+                g2.dispose();
+            }
+        };
+        pildoraFecha.setLayout(null);
+        pildoraFecha.setOpaque(false);
+        pildoraFecha.setBounds(36, 97, 155, 42);
+        panelContenedor.add(pildoraFecha);
 
-		        PreparedStatement ps = con.prepareStatement(sql);
-		        ps.setString(1, producto);
-		        ps.setString(2, cantidad);
-		        ps.setString(3, tipo);
-		        ps.setDate(4, new java.sql.Date(fecha.getTime()));
-		        ps.setString(5, proveedor);
-		        ps.setString(6, estado);   // ✅ antes ponías monto aquí por error
-		        ps.setString(7, monto);
+        // -- IMPLEMENTACIÓN DEL CALENDARIO BLINDADO EN BLANCO --
+        com.toedter.calendar.JTextFieldDateEditor txtEditor = new com.toedter.calendar.JTextFieldDateEditor() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void setForeground(Color c) {
+                super.setForeground(Color.WHITE);
+            }
+            @Override
+            public void setDisabledTextColor(Color c) {
+                super.setDisabledTextColor(Color.WHITE);
+            }
+            @Override
+            public java.awt.Color getForeground() {
+                return Color.WHITE;
+            }
+        };
 
-		        ps.executeUpdate();
-		        JOptionPane.showMessageDialog(null, "Guardado correctamente");
+        txtEditor.setOpaque(false);
+        txtEditor.setCaretColor(Color.WHITE);
+        txtEditor.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        txtEditor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-		        
-		        textField_2.setText("");
-		        textField_3.setText("");
-		        textField_4.setText("");
-		        textField_5.setText("");
-		        cbTIPO.setSelectedIndex(0);
-		        cbESTADO.setSelectedIndex(0);
-		        dateChooser.setDate(null);
+        dateChooser = new JDateChooser(txtEditor);
+        dateChooser.setOpaque(false);
+        dateChooser.setDateFormatString("yyyy-MM-dd");
+        dateChooser.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-		        con.close();
+        com.toedter.calendar.JCalendar jcal = dateChooser.getJCalendar();
+        jcal.setBackground(new Color(30, 30, 30));
+        jcal.getDayChooser().setWeekdayForeground(Color.WHITE);
+        jcal.getDayChooser().setSundayForeground(Color.WHITE);
+        jcal.getDayChooser().setDecorationBackgroundColor(new Color(45, 45, 45));
 
-		    } catch (Exception ex) {
-		        ex.printStackTrace();
-		        JOptionPane.showMessageDialog(null, "Error al guardar: " + ex.getMessage());
-		    	}
-			}
-		}
-	}
+        dateChooser.addPropertyChangeListener(evt -> {
+            txtEditor.setForeground(Color.WHITE);
+            txtEditor.repaint();
+            try {
+                for (java.awt.Component comp : jcal.getDayChooser().getDayPanel().getComponents()) {
+                    comp.setForeground(Color.WHITE);
+                }
+            } catch (Exception ignored) {}
+        });
 
+        dateChooser.setBounds(5, 2, 145, 38);
+        pildoraFecha.add(dateChooser);
+        // --------------------------------------------------------
+
+        lblNombreG = new JLabel("N° DE SOLICITUD:");
+        lblNombreG.setForeground(Color.WHITE);
+        lblNombreG.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblNombreG.setBounds(210, 75, 120, 19);
+        panelContenedor.add(lblNombreG);
+
+        textField_4 = crearTextFieldEstilizado();
+        textField_4.setBounds(210, 100, 140, 35);
+        textField_4.setEditable(false);
+        panelContenedor.add(textField_4);
+
+        btnLimpiar = new JButton("");
+        btnLimpiar.setBounds(370, 100, 45, 35);
+        try { btnLimpiar.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/Limpiar.png"))); } catch(Exception e){}
+        configurarBotonIcono(btnLimpiar, translucidoBase, translucidoHover);
+        panelContenedor.add(btnLimpiar);
+
+        lblProducto = new JLabel("PRODUCTO:");
+        lblProducto.setForeground(Color.WHITE);
+        lblProducto.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblProducto.setBounds(36, 150, 100, 18);
+        panelContenedor.add(lblProducto);
+
+        textField_2 = crearTextFieldEstilizado();
+        textField_2.setBounds(36, 175, 130, 35);
+        panelContenedor.add(textField_2);
+
+        lblCantidad = new JLabel("CANTIDAD:");
+        lblCantidad.setForeground(Color.WHITE);
+        lblCantidad.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblCantidad.setBounds(185, 150, 83, 18);
+        panelContenedor.add(lblCantidad);
+
+        textField_3 = crearTextFieldEstilizado();
+        textField_3.setBounds(185, 175, 90, 35);
+        panelContenedor.add(textField_3);
+
+        lblTipo = new JLabel("TIPO:");
+        lblTipo.setForeground(Color.WHITE);
+        lblTipo.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblTipo.setBounds(290, 150, 71, 19); // Ajuste X para equilibrar ancho
+        panelContenedor.add(lblTipo);
+
+        JPanel pildoraTipo = crearContenedorPildoraCombo();
+        // AUMENTO DEL ANCHO DE 130 A 150 PARA EVITAR QUE SE CORTE
+        pildoraTipo.setBounds(285, 175, 150, 35); 
+        panelContenedor.add(pildoraTipo);
+
+        cbTIPO = new JComboBox<>(new String[]{"Selecciona el tipo", "REFRESCO", "LICOR", "OTROS"});
+        estilarComboBox(cbTIPO);
+        cbTIPO.setBounds(0, 0, 150, 35);
+        pildoraTipo.add(cbTIPO);
+
+        btnAgregar = new JButton("");
+        btnAgregar.setBounds(445, 175, 45, 35); // Reajuste mínimo del botón agregar
+        try { btnAgregar.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/Agregar.png"))); } catch(Exception e){}
+        configurarBotonIcono(btnAgregar, translucidoBase, translucidoHover);
+        panelContenedor.add(btnAgregar);
+
+        lblEstado = new JLabel("ESTADO:");
+        lblEstado.setForeground(Color.WHITE);
+        lblEstado.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblEstado.setBounds(36, 225, 100, 19);
+        panelContenedor.add(lblEstado);
+
+        JPanel pildoraEstado = crearContenedorPildoraCombo();
+        pildoraEstado.setBounds(36, 250, 160, 35);
+        panelContenedor.add(pildoraEstado);
+
+        cbESTADO = new JComboBox<>(new String[]{"Selecciona estado", "PENDIENTE", "APROBADO", "RECIBIDO"});
+        estilarComboBox(cbESTADO);
+        cbESTADO.setBounds(0, 0, 160, 35);
+        pildoraEstado.add(cbESTADO);
+
+        table = new JTable(this.modeloCompra);
+        scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(36, 305, 430, 200);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        panelContenedor.add(scrollPane);
+        
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBackground(new Color(0, 0, 0, 0));
+        scrollPane.getViewport().setBackground(new Color(0, 0, 0, 0));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 40), 1));
+
+        table.setOpaque(false);
+        if (table.getDefaultRenderer(Object.class) instanceof javax.swing.table.DefaultTableCellRenderer) {
+            ((javax.swing.table.DefaultTableCellRenderer)table.getDefaultRenderer(Object.class)).setOpaque(false);
+        }
+        table.setBackground(new Color(0, 0, 0, 0)); 
+        table.setForeground(Color.WHITE);           
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setRowHeight(25);                     
+        table.setGridColor(new Color(255, 255, 255, 30)); 
+        table.setSelectionBackground(new Color(255, 255, 255, 45)); 
+        table.setSelectionForeground(Color.WHITE);
+
+        table.getTableHeader().setReorderingAllowed(false); 
+        table.getTableHeader().setBackground(new Color(255, 255, 255, 35)); 
+        table.getTableHeader().setForeground(Color.WHITE); 
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(255, 255, 255, 60)));
+
+        btnVolver = new JButton("") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
+                g2.setColor(new Color(255, 255, 255, 60));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        try { btnVolver.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/Volver.png"))); } catch(Exception e){}
+        // SE REDISTRIBUYEN BOTONES Y AMPLÍAN TAMAÑOS PARA NO CORTAR TEXTOS
+        btnVolver.setBounds(30, 540, 95, 40);
+        configurarBotonIcono(btnVolver, translucidoBase, translucidoHover);
+        panelContenedor.add(btnVolver);
+
+        btnGuardar = new JButton("GUARDAR") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
+                g2.setColor(new Color(255, 255, 255, 60));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        try { btnGuardar.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/Guardar.png"))); } catch(Exception e){}
+        btnGuardar.setBounds(140, 540, 140, 40);
+        configurarBotonIcono(btnGuardar, translucidoBase, translucidoHover);
+        panelContenedor.add(btnGuardar);
+
+        btnVerTodo = new JButton("VER TODOS") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
+                g2.setColor(new Color(255, 255, 255, 60));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        try { btnVerTodo.setIcon(new ImageIcon(solicitud_compra.class.getResource("/imagenes/VerTodo.png"))); } catch(Exception e){}
+        // SE AMPLÍA DE 120 A 145 EL ANCHO PARA EVITAR "Ver t..."
+        btnVerTodo.setBounds(295, 540, 145, 40);
+        configurarBotonIcono(btnVerTodo, translucidoBase, translucidoHover);
+        panelContenedor.add(btnVerTodo);
+
+        try {
+            ImageIcon icono = new ImageIcon(solicitud_compra.class.getResource("/imagenes/fondo9.jpeg"));
+            Image imgEscalada = icono.getImage().getScaledInstance(560, 720, Image.SCALE_SMOOTH);
+            JLabel lblFondo = new JLabel(new ImageIcon(imgEscalada));
+            lblFondo.setBounds(0, 0, 560, 720);
+            add(lblFondo);
+            setComponentZOrder(lblFondo, getComponentCount() - 1);
+        } catch (Exception e) {
+            System.out.println("No se encontró la imagen de fondo en solicitud_compra");
+        }
+    }
+
+    private JTextField crearTextFieldEstilizado() {
+        JTextField field = new JTextField() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(255, 255, 255, 20));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
+                g2.dispose();
+                super.paintComponent(g);
+            }
+            @Override
+            protected void paintBorder(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(255, 255, 255, 40));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
+                g2.dispose();
+            }
+        };
+        field.setOpaque(false);
+        field.setForeground(Color.WHITE);
+        field.setDisabledTextColor(Color.WHITE); // FUERZA BLANCO AUNQUE ESTÉ BLOQUEADO
+        field.setCaretColor(Color.WHITE);
+        field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        field.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
+        return field;
+    }
+
+    private JPanel crearContenedorPildoraCombo() {
+        JPanel pildora = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(255, 255, 255, 20));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight());
+                g2.setColor(new Color(255, 255, 255, 40));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
+                g2.setColor(new Color(255, 255, 255, 180));
+                int cx = getWidth() - 18;
+                int cy = getHeight() / 2;
+                int[] xp = {cx - 5, cx + 5, cx};
+                int[] yp = {cy - 3, cy - 3, cy + 4};
+                g2.fillPolygon(xp, yp, 3);
+                g2.dispose();
+            }
+        };
+        pildora.setLayout(null);
+        pildora.setOpaque(false);
+        return pildora;
+    }
+
+    private void estilarComboBox(JComboBox<String> combo) {
+        combo.setUI(new javax.swing.plaf.basic.BasicComboBoxUI() {
+            @Override
+            protected JButton createArrowButton() {
+                JButton invisible = new JButton();
+                invisible.setBorder(BorderFactory.createEmptyBorder());
+                invisible.setContentAreaFilled(false);
+                invisible.setOpaque(false);
+                invisible.setPreferredSize(new java.awt.Dimension(0, 0));
+                return invisible;
+            }
+            @Override
+            public void paintCurrentValue(Graphics g, java.awt.Rectangle bounds, boolean hasFocus) {
+                javax.swing.ListCellRenderer<Object> renderer = comboBox.getRenderer();
+                java.awt.Component c = renderer.getListCellRendererComponent(listBox, comboBox.getSelectedItem(), -1, false, false);
+                c.setFont(comboBox.getFont());
+                if (c instanceof javax.swing.JComponent) {
+                    ((javax.swing.JComponent) c).setOpaque(false);
+                }
+                currentValuePane.paintComponent(g, c, comboBox, bounds.x, bounds.y, bounds.width, bounds.height, c instanceof JButton);
+            }
+            @Override
+            public void paintCurrentValueBackground(Graphics g, java.awt.Rectangle bounds, boolean hasFocus) {}
+            @Override
+            protected javax.swing.plaf.basic.ComboPopup createPopup() {
+                javax.swing.plaf.basic.BasicComboPopup popup = (javax.swing.plaf.basic.BasicComboPopup) super.createPopup();
+                popup.getList().setBackground(new Color(30, 30, 30));
+                popup.getList().setForeground(Color.WHITE);
+                popup.getList().setSelectionBackground(new Color(0, 128, 255));
+                popup.getList().setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                popup.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 38), 1));
+                return popup;
+            }
+        });
+
+        combo.setRenderer(new javax.swing.plaf.basic.BasicComboBoxRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(javax.swing.JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                setOpaque(index != -1);
+                setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                setForeground(Color.WHITE);
+                return this;
+            }
+        });
+
+        combo.setOpaque(false);
+        combo.setBackground(new Color(0,0,0,0));
+        combo.setForeground(Color.WHITE);
+        combo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        combo.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 25));
+    }
+
+    private void configurarBotonIcono(JButton boton, Color base, Color hover) {
+        boton.setBackground(base);
+        boton.setForeground(Color.WHITE);
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        boton.setFocusPainted(false);
+        boton.setBorderPainted(false);
+        boton.setContentAreaFilled(false);
+        boton.setOpaque(false);
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        boton.addActionListener(this);
+        boton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) { boton.setBackground(hover); boton.repaint(); }
+            @Override
+            public void mouseExited(MouseEvent e)  { boton.setBackground(base);  boton.repaint(); }
+        });
+    }
+
+    private void validarCampos() throws
+            validaciones.FechaVaciaException,
+            validaciones.ProductoSoloLetrasException,
+            validaciones.ProductoLongitudException,
+            validaciones.CantidadSoloNumerosException,
+            validaciones.CantidadLongitudException,
+            validaciones.TipoObligatorioException,
+            validaciones.NumeroSolicitudObligatorioException,
+            validaciones.EstadoObligatorioException {
+
+        String producto = textField_2.getText().trim();
+        String cantidad = textField_3.getText().trim();
+        String tipo     = cbTIPO.getSelectedItem().toString();
+        String estado   = cbESTADO.getSelectedItem().toString();
+
+        if (dateChooser.getDate() == null)
+            throw new validaciones.FechaVaciaException();
+
+        if (!producto.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+"))
+            throw new validaciones.ProductoSoloLetrasException();
+
+        if (producto.length() > 15)
+            throw new validaciones.ProductoLongitudException();
+
+        if (!cantidad.matches("[0-9]+"))
+            throw new validaciones.CantidadSoloNumerosException();
+
+        if (cantidad.length() > 6)
+            throw new validaciones.CantidadLongitudException();
+
+        if (tipo.equals("Selecciona el tipo"))
+            throw new validaciones.TipoObligatorioException();
+
+        if (estado.equals("Selecciona estado"))
+            throw new validaciones.EstadoObligatorioException();
+    }
+    
+    private void validarCamposSinFecha() throws 
+    validaciones.ProductoSoloLetrasException,
+    validaciones.ProductoLongitudException,
+    validaciones.CantidadSoloNumerosException,
+    validaciones.CantidadLongitudException,
+    validaciones.TipoObligatorioException {
+
+        String producto = textField_2.getText().trim();
+        String cantidad = textField_3.getText().trim();
+        String tipo     = cbTIPO.getSelectedItem().toString();
+
+        if (!producto.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+"))
+            throw new validaciones.ProductoSoloLetrasException();
+
+        if (producto.length() > 15)
+            throw new validaciones.ProductoLongitudException();
+
+        if (!cantidad.matches("[0-9]+"))
+            throw new validaciones.CantidadSoloNumerosException();
+
+        if (cantidad.length() > 6)
+            throw new validaciones.CantidadLongitudException();
+
+        if (tipo.equals("Selecciona el tipo"))
+            throw new validaciones.TipoObligatorioException();
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        Object ob = e.getSource();
+
+        if (ob.equals(btnVolver)) {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            frame.setContentPane(new gerente("Gerente"));
+            frame.revalidate();
+            frame.repaint();
+        }
+
+        if (ob.equals(btnVerTodo)) {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            frame.setContentPane(new contiene(modeloSolicitud));
+            frame.revalidate();
+            frame.repaint();
+        }
+
+        if (ob.equals(btnAgregar)) {
+            try {
+                validarCamposSinFecha();
+                modeloCompra = (DefaultTableModel) table.getModel();
+
+                String producto = textField_2.getText();
+                String cantidad = textField_3.getText();
+                String tipo = cbTIPO.getSelectedItem().toString();
+
+                modeloCompra.addRow(new Object[]{producto, cantidad, tipo});
+                JOptionPane.showMessageDialog(null, "Producto agregado");
+
+            } catch (validaciones.ProductoSoloLetrasException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.ProductoLongitudException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.CantidadSoloNumerosException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.CantidadLongitudException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.TipoObligatorioException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error al guardar: " + ex.getMessage());
+            }
+        }    
+        
+        if (ob.equals(btnGuardar)) {
+            try {
+                validarCampos();
+                GestionBaseDatos g = new GestionBaseDatos();
+                Date fechaDate = dateChooser.getDate();
+
+                if (fechaDate == null) {
+                    JOptionPane.showMessageDialog(null, "Seleccione una fecha");
+                    return;
+                }
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String fecha = sdf.format(fechaDate);
+                String estado = cbESTADO.getSelectedItem().toString();
+
+                int idGenerado = g.guardarSolicitud(fecha, estado);
+                textField_4.setText(String.valueOf(idGenerado));
+
+                for (int i = 0; i < table.getRowCount(); i++) {
+                    String producto = table.getValueAt(i, 0).toString();
+                    int cantidad = Integer.parseInt(table.getValueAt(i, 1).toString());
+                    String tipo = table.getValueAt(i, 2).toString();
+
+                    g.guardarDetalle(idGenerado, producto, cantidad, tipo);
+                }
+
+                JOptionPane.showMessageDialog(null, "Solicitud guardada con ID: " + idGenerado);
+
+            } catch (validaciones.FechaVaciaException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.ProductoSoloLetrasException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.ProductoLongitudException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.CantidadSoloNumerosException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.CantidadLongitudException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.TipoObligatorioException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.EstadoObligatorioException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (validaciones.NumeroSolicitudObligatorioException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error al guardar: " + ex.getMessage());
+            }
+        }
+
+        if (ob.equals(btnLimpiar)) {
+            int filaSeleccionada = table.getSelectedRow();
+
+            if (filaSeleccionada != -1) {
+                DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+                modelo.removeRow(filaSeleccionada);
+            } else {
+                textField_2.setText("");
+                textField_3.setText("");
+                textField_4.setText("");
+                cbTIPO.setSelectedIndex(0);
+                cbESTADO.setSelectedIndex(0);
+                dateChooser.setDate(null);
+            }
+        }
+    }
+}
